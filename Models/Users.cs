@@ -30,7 +30,7 @@ namespace OrderMnagementAPIs.Models
         public DateTime CreatedAt { get; set; } // Date and time the user was created
 
         // Relationships
-        // public ICollection<Order> Orders { get; set; } = new List<Order>(); // A user can place multiple orders
+         public ICollection<Order> Orders { get; set; } = new List<Order>(); // A user can place multiple orders
         // public ICollection<Review> Reviews { get; set; } = new List<Review>(); // A user can write multiple reviews
 
     }
