@@ -20,7 +20,7 @@ namespace OrderMnagementAPIs.Models
         [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative.")] // Validates stock is non-negative
         public int Stock { get; set; } // Number of items in stock, e.g., 100
 
-        public decimal OverallRating { get; set; } // Average rating calculated from reviews
+        public decimal OverallRating { get; set; } = 0; // Average rating calculated from reviews
 
         // Relationships
        // public ICollection<Review> Reviews { get; set; } = new List<Review>(); // A product can have multiple reviews

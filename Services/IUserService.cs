@@ -3,7 +3,7 @@ using OrderMnagementAPIs.Models;
 
 namespace OrderMnagementAPIs.Services
 {
-    public interface IUsersService
+    public interface IUserService
     {
         UsersDTO GetUserById(int id);
         void RegisterUser(Users user, string password);

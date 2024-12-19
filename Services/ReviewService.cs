@@ -6,11 +6,11 @@ namespace OrderMnagementAPIs.Services
 {
     public class ReviewService : IReviewService
     {
-        private readonly ReviewRepository _reviewRepository; // This field holds the repository for managing reviews.
-        private readonly OrderRepository _orderRepository; // This field holds the repository for validating previous orders.
-        private readonly ProductsRepository _productRepository; // This field holds the repository for managing product ratings.
+        private readonly IReviewRepository _reviewRepository; // This field holds the repository for managing reviews.
+        private readonly IOrderRepository _orderRepository; // This field holds the repository for validating previous orders.
+        private readonly IProductsRepository _productRepository; // This field holds the repository for managing product ratings.
 
-        public ReviewService(ReviewRepository reviewRepository, OrderRepository orderRepository, ProductsRepository productRepository)
+        public ReviewService(IReviewRepository reviewRepository, IOrderRepository orderRepository, IProductsRepository productRepository)
         {
             _reviewRepository = reviewRepository; // Initialize the review repository dependency.
             _orderRepository = orderRepository; // Initialize the order repository dependency.

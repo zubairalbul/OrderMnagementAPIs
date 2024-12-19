@@ -7,11 +7,11 @@ namespace OrderMnagementAPIs.Services
     // Order Service
     public class OrderService : IOrderService
     {
-        private readonly OrderRepository _orderRepository; // Repository for managing orders.
-        private readonly ProductsRepository _productRepository; // Repository for managing products.
-        private readonly OrderProductRepository _orderProductRepository; // Handles many-to-many relationship between orders and products.
+        private readonly IOrderRepository _orderRepository; // Repository for managing orders.
+        private readonly IProductsRepository _productRepository; // Repository for managing products.
+        private readonly IOrderProductRepository _orderProductRepository; // Handles many-to-many relationship between orders and products.
 
-        public OrderService(OrderRepository orderRepository, ProductsRepository productRepository, OrderProductRepository orderProductRepository)
+        public OrderService(IOrderRepository orderRepository, IProductsRepository productRepository, IOrderProductRepository orderProductRepository)
         {
             _orderRepository = orderRepository; // Initialize order repository.
             _productRepository = productRepository; // Initialize product repository.

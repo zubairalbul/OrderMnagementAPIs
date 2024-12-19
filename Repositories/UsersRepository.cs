@@ -5,7 +5,10 @@ namespace OrderMnagementAPIs.Repositories
     public class UsersRepository : IUsersRepository
     {
         private readonly ApplicationDbContext _context;
-        public UsersRepository(ApplicationDbContext context) => _context = context;
+        public UsersRepository(ApplicationDbContext context) 
+        {
+            _context = context;
+        }
 
         public IEnumerable<Users> GetAll() => _context.Set<Users>().ToList();
         public Users GetById(int id) => _context.Set<Users>().Find(id);

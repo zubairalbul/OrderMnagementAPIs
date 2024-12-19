@@ -6,9 +6,9 @@ namespace OrderMnagementAPIs.Services
 {
     public class ProductService : IProductService
     {
-        private readonly ProductsRepository _productRepository; // This field holds the repository for product-related database operations.
+        private readonly IProductsRepository _productRepository; // This field holds the repository for product-related database operations.
 
-        public ProductService(ProductsRepository productRepository)
+        public ProductService(IProductsRepository productRepository)
         {
             _productRepository = productRepository; // Initialize the product repository dependency.
         }

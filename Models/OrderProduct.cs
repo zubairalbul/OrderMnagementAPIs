@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OrderMnagementAPIs.Models
 {
+
     public class OrderProduct
     {
         [Key] // Composite key part 1
