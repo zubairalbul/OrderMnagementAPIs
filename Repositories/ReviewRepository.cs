@@ -2,7 +2,7 @@
 
 namespace OrderMnagementAPIs.Repositories
 {
-    public class ReviewRepository : IReviewRepository
+    public class ReviewRepository :IReviewRepository
     {
         private readonly ApplicationDbContext _context;
         public ReviewRepository(ApplicationDbContext context) => _context = context;

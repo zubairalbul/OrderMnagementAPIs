@@ -46,17 +46,27 @@ namespace OrderMnagementAPIs
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = false, // You can set this to true if you want to validate the issuer.
-                    ValidateAudience = false, // You can set this to true if you want to validate the audience.
-                    ValidateLifetime = true, // Ensures the token hasn't expired.
-                    ValidateIssuerSigningKey = true, // Ensures the token is properly signed.
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)) // Match with your token generation key.
-                };
-            });
+.AddJwtBearer(options =>
+{
+    var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+    var key = jwtSettings["Key"];
+
+    if (string.IsNullOrEmpty(key))
+    {
+        throw new ArgumentNullException("JwtSettings:Key", "The JWT Key cannot be null or empty.");
+    }
+
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+    };
+});
 
 
 

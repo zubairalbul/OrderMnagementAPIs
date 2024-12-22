@@ -9,5 +9,10 @@
         public int Rating { get; set; } // Stores the rating given by the user (1 to 5).
         public string Comment { get; set; } // Optional comment provided by the user.
         public DateTime ReviewDate { get; set; } // Records the date and time the review was submitted.
+
+        internal bool Any(Func<object, bool> value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

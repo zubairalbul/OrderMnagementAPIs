@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using OrderMnagementAPIs.DTOs;
@@ -56,6 +57,25 @@ namespace OrderMnagementAPIs.Controllers
             var token = new JwtSecurityToken(claims: claims,expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["ExpiryInMinutes"])),signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        // Authenticates a user and returns a JWT token
+        // Authenticates a user and returns a JWT token
+        [AllowAnonymous]
+        // Action method for handling GET requests to log in a user.
+        [HttpGet("Login")]
+        public IActionResult Login(string email, string password)
+        {
+            var user = _userService.GetUser(email, password);
+            if (user != null)
+            {
+                string token = _userService.Authenticate(user.UserEmail, password);
+                return Ok(new { Token = token, User = user });
+            }
+            else
+            {
+                return BadRequest("Invalid Credentials");
+            }
         }
 
 

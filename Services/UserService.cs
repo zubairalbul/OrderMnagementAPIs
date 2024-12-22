@@ -2,64 +2,115 @@
 using OrderMnagementAPIs.DTOs;
 using OrderMnagementAPIs.Models;
 using OrderMnagementAPIs.Repositories;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace OrderMnagementAPIs.Services
 {
-    // User Service: This service handles all user-related operations, such as registration, validation, and retrieving user details.
     public class UserService : IUserService
     {
-        private readonly IUsersRepository _userRepository; // This field holds the repository for user-related database operations.
+        private readonly IUsersRepository _userRepository;
+        private readonly IConfiguration _configuration;
 
-        public UserService(IUsersRepository userRepository)
+        public UserService(IUsersRepository userRepository, IConfiguration configuration)
         {
-            _userRepository = userRepository; // Initialize the user repository dependency.
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        // Hashes the password manually using SHA256.
+
+        public string Authenticate(string email, string password)
+        {
+            var user = _userRepository.GetAll().FirstOrDefault(u => u.UserEmail == email);
+            if (user != null && user.UserPassword == HashPassword(password))
+            {
+                return GenerateJwtToken(user.UserId.ToString(), user.UserName);
+            }
+            return null;
+        }
+
+        public Users GetUser(string email, string password)
+        {
+            var user = _userRepository.GetAll().FirstOrDefault(u => u.UserEmail == email);
+            if (user != null && user.UserPassword == HashPassword(password))
+            {
+                return user;
+            }
+            return null;
+        }
+
+        public UsersDTO GetUserById(int id)
+        {
+            var user = _userRepository.GetById(id);
+            return user == null ? null : new UsersDTO
+            {
+                UserId = user.UserId,
+                UserName = user.UserName,
+                UserEmail = user.UserEmail,
+                UserPhone = user.UserPhone,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt
+            };
+        }
+
+        public void RegisterUser(Users user, string password)
+        {
+            user.UserPassword = HashPassword(password);
+            _userRepository.Add(user);
+        }
+
+        public bool ValidateUser(string email, string password, out Users user)
+        {
+            user = _userRepository.GetAll().FirstOrDefault(u => u.UserEmail == email);
+            return user != null && user.UserPassword == HashPassword(password);
+        }
+
         private string HashPassword(string password)
         {
             using (var sha256 = SHA256.Create())
             {
-                var bytes = Encoding.UTF8.GetBytes(password); // Convert the password to bytes.
-                var hash = sha256.ComputeHash(bytes); // Compute the hash.
-                return Convert.ToBase64String(hash); // Convert the hash to a Base64 string.
+                var bytes = Encoding.UTF8.GetBytes(password);
+                var hash = sha256.ComputeHash(bytes);
+                return Convert.ToBase64String(hash);
             }
         }
 
-        // Registers a new user and hashes the password before saving.
-        public void RegisterUser(Users user, string password)
+        private string GenerateJwtToken(string userId, string userName)
         {
-            user.UserPassword = HashPassword(password); // Hash the user's password manually.
-            _userRepository.Add(user); // Save the user to the repository.
-        }
+            var jwtSettings = _configuration.GetSection("JwtSettings");
+            var key = jwtSettings["Key"];
+            var issuer = jwtSettings["Issuer"];
+            var audience = jwtSettings["Audience"];
+            var expireMinutes = jwtSettings["ExpireMinutes"];
 
-        // Validates a user's credentials by checking email and password.
-        public bool ValidateUser(string email, string password, out Users user)
-        {
-            user = _userRepository.GetAll().FirstOrDefault(u => u.UserEmail == email); // Retrieve user by email.
-            if (user != null && user.UserPassword == HashPassword(password))
+            if (string.IsNullOrEmpty(key) || key.Length < 32)
             {
-                return true; // Return true if the password matches.
+                throw new ArgumentException("The JWT Key must be at least 32 characters long.");
             }
-            return false; // Return false if validation fails.
+
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+        new Claim(ClaimTypes.NameIdentifier, userId),
+        new Claim(ClaimTypes.Name, userName)
+    };
+
+            var token = new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(double.Parse(expireMinutes)),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        // Retrieves user details by ID and maps them to a UserDTO.
-        public UsersDTO GetUserById(int id)
-        {
-            var user = _userRepository.GetById(id); // Fetch the user by ID.
-            return user == null ? null : new UsersDTO
-            {
-                UserId = user.UserId, // Map user ID.
-                UserName = user.UserName, // Map user name.
-                UserEmail = user.UserEmail, // Map user email.
-                UserPhone = user.UserPhone, // Map user phone.
-                Role = user.Role, // Map user role.
-                CreatedAt = user.CreatedAt // Map creation date.
-            };
-        }
+
     }
 
 }
