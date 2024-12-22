@@ -26,12 +26,14 @@ namespace OrderMnagementAPIs
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IOrderProductRepository, OrderProductRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-
+            builder.Services.AddScoped<CartRepository>();
             // Register Services
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IReviewService, ReviewService>();
+            
+            builder.Services.AddScoped<CartService>();
 
             // Add controllers
             builder.Services.AddControllers();
