@@ -23,7 +23,7 @@ namespace OrderMnagementAPIs.Models
         public decimal OverallRating { get; set; } = 0; // Average rating calculated from reviews
 
         // Relationships
-       // public ICollection<Review> Reviews { get; set; } = new List<Review>(); // A product can have multiple reviews
+        public ICollection<Review> Reviews { get; set; } = new List<Review>(); // A product can have multiple reviews
         public ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>(); // A product can belong to multiple orders
     }
 }
