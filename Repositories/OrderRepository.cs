@@ -14,6 +14,8 @@ namespace OrderMnagementAPIs.Repositories
             _context.Set<Order>().Add(order);
             _context.SaveChanges();
         }
+        
+
         public void Update(Order order)
         {
             _context.Set<Order>().Update(order);

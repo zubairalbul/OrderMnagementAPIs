@@ -5,6 +5,7 @@ namespace OrderMnagementAPIs.Repositories
     public class OrderProductRepository : IOrderProductRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly OrderProductRepository _orderProductRepository;
         public OrderProductRepository(ApplicationDbContext context) => _context = context;
 
         public IEnumerable<OrderProduct> GetAll() => _context.Set<OrderProduct>().ToList();
@@ -14,6 +15,8 @@ namespace OrderMnagementAPIs.Repositories
             _context.Set<OrderProduct>().Add(orderProduct);
             _context.SaveChanges();
         }
+
+
         public void Update(OrderProduct orderProduct)
         {
             _context.Set<OrderProduct>().Update(orderProduct);

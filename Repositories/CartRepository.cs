@@ -17,6 +17,7 @@ namespace OrderMnagementAPIs.Repositories
             return _context.Carts.Include(c => c.Items).FirstOrDefault(c => c.UserId == userId);
         }
 
+
         public void AddItemToCart(int userId, int productId, int quantity)
         {
             var cart = GetCartByUserId(userId) ?? CreateCart(userId);

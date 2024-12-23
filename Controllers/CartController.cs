@@ -27,6 +27,19 @@ namespace OrderMnagementAPIs.Controllers
             _cartService.AddItemToCart(userId, productId, quantity);
             return Ok("Item added to cart.");
         }
+        [HttpPost("{userId}/checkout")]
+        public IActionResult Checkout(int userId)
+        {
+            try
+            {
+                _cartService.Checkout(userId);
+                return Ok("Checkout completed successfully.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message); // Return error message if checkout fails
+            }
+        }
 
         [HttpDelete("{userId}/remove")]
         public IActionResult RemoveItemFromCart(int userId, [FromQuery] int productId)
